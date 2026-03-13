@@ -1,0 +1,4 @@
+#!/sbin/openrc-run
+command="/usr/local/bin/runtime"
+command_background="no"
+description="Run the runtime executable once at boot"
