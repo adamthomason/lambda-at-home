@@ -4,7 +4,7 @@ set -e
 
 # Configuration
 IMAGE_NAME="${1}"
-SIZE=${2:-"600"}
+SIZE="${2}"
 SOURCE_DIR="/workspace/dist/$IMAGE_NAME"
 ARTIFACT_PATH="/workspace/artifacts/$IMAGE_NAME.ext4"
 MOUNT_PATH="/tmp/$IMAGE_NAME"
@@ -30,6 +30,13 @@ error() {
 
 if [ -f "$ARTIFACT_PATH" ] ; then
     rm "$ARTIFACT_PATH"
+fi
+
+# Auto-calculate size from source directory if not explicitly provided
+if [ -z "$SIZE" ]; then
+    MEASURED_MB=$(du -sm "$SOURCE_DIR" | cut -f1)
+    SIZE=$(( MEASURED_MB * 12 / 10 + 16 ))
+    log "Auto-calculated image size: ${SIZE}MB (source: ${MEASURED_MB}MB + 20% overhead + 16MB ext4 metadata)"
 fi
 
 log "Creating and mounting base ext4 image"
