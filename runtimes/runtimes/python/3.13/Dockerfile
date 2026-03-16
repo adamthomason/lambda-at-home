@@ -13,6 +13,6 @@ RUN pip install --no-cache-dir -r /app/included-libraries.txt && \
     find /usr/local/lib/python3.13 -name '*.pyc' -delete && \
     rm -rf /root/.cache
 
-RUN cat /app/init.sh > /sbin/init && chmod +x /sbin/init
+RUN rm -f /sbin/init && cp /app/init.sh /sbin/init && chmod +x /sbin/init
 
 ENTRYPOINT ["/sbin/init"]
