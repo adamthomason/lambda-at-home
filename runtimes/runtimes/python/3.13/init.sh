@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 echo "Init script starting"
 
 # Mount /proc if it's not already mounted

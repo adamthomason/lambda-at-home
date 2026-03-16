@@ -1,11 +1,6 @@
-FROM python:3.13.5-slim-bookworm
+FROM python:3.13-alpine
 
 ENV PYTHONUNBUFFERED=1
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends busybox && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 COPY ./runtimes/python/3.13/ /app/
 
