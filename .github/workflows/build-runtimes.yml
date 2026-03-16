@@ -35,4 +35,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python-3.13-runtime
-          path: runtimes/artifacts/lambda-at-home-runtime-python:3.13.ext4
+          path: runtimes/artifacts/lambda-at-home-runtime-python-3.13.ext4

@@ -6,7 +6,7 @@ set -e
 IMAGE_NAME="${1}"
 SIZE="${2}"
 SOURCE_DIR="/workspace/dist/$IMAGE_NAME"
-ARTIFACT_PATH="/workspace/artifacts/$IMAGE_NAME.ext4"
+ARTIFACT_PATH="/workspace/artifacts/$(echo "$IMAGE_NAME" | tr ':' '-').ext4"
 MOUNT_PATH="/tmp/$IMAGE_NAME"
 
 # Colors for output
