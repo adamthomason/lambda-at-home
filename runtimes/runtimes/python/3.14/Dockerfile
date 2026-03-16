@@ -1,10 +1,10 @@
-FROM python:3.13-alpine
+FROM python:3.14-alpine
 
 ENV PYTHONUNBUFFERED=1
 
 # Copy shared Python runtime code, then version-specific files on top
 COPY ./common/python/ /app/
-COPY ./runtimes/python/3.13/ /app/
+COPY ./runtimes/python/3.14/ /app/
 
 RUN pip install --no-cache-dir -r /app/included-libraries.txt && \
     pip install --no-cache-dir -r /app/requirements.txt && \

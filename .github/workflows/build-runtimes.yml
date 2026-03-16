@@ -36,3 +36,33 @@ jobs:
         with:
           name: python-3.13-runtime
           path: runtimes/artifacts/lambda-at-home-runtime-python-3.13.ext4
+
+  build-python-3-14:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create output directories
+        run: mkdir -p dist artifacts
+        working-directory: runtimes
+
+      - name: Build generate-ext4 helper image
+        run: docker build --platform linux/amd64 -t generate-ext4 .
+        working-directory: runtimes
+
+      - name: Build Python 3.14 runtime
+        run: |
+          chmod +x ./generate-rootfs.sh
+          ./generate-rootfs.sh lambda-at-home-runtime-python:3.14 ./runtimes/python/3.14/Dockerfile
+        working-directory: runtimes
+
+      - name: Upload ext4 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-3.14-runtime
+          path: runtimes/artifacts/lambda-at-home-runtime-python-3.14.ext4
