@@ -6,7 +6,7 @@ set -e
 IMAGE_NAME="${1}"
 DOCKERFILE_PATH="${2}"
 OUTPUT_DIR="./dist/$IMAGE_NAME"
-CONTAINER_NAME="rootfs-export-$IMAGE_NAME"
+CONTAINER_NAME="rootfs-export-$(echo "$IMAGE_NAME" | tr ':' '-')"
 
 # Colors for output
 RED='\033[0;31m'
