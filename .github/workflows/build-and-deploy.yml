@@ -90,3 +90,13 @@ jobs:
         run: |
           echo "Artifacts:"
           ls artifacts/
+
+  deploy-image-to-cluster:
+    name: Deploy image to cluster
+    environment: Production
+    runs-on: ubuntu-latest
+    needs: [create-image]
+    steps:
+      - name: Do something
+        run: |
+          echo "Doing something"
