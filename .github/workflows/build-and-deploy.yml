@@ -31,9 +31,20 @@ jobs:
         name: go-binary
         path: artifacts/lambda-at-home
 
-  build-python-3-13:
-    name: Build Python 3.13 runtime
+  build-runtimes:
+    name: Build ${{ matrix.name }} runtime
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: Python 3.13
+            image: lambda-at-home-runtime-python:3.13
+            dockerfile: ./runtimes/python/3.13/Dockerfile
+            artifact: python-3.13-runtime
+          - name: Python 3.14
+            image: lambda-at-home-runtime-python:3.14
+            dockerfile: ./runtimes/python/3.14/Dockerfile
+            artifact: python-3.14-runtime
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -49,64 +60,29 @@ jobs:
         run: docker build --platform linux/amd64 -t generate-ext4 .
         working-directory: runtimes
 
-      - name: Build Python 3.13 runtime
+      - name: Build runtime
         run: |
           chmod +x ./generate-rootfs.sh
-          ./generate-rootfs.sh lambda-at-home-runtime-python:3.13 ./runtimes/python/3.13/Dockerfile
+          ./generate-rootfs.sh ${{ matrix.image }} ${{ matrix.dockerfile }}
         working-directory: runtimes
 
       - name: Upload ext4 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: python-3.13-runtime
-          path: runtimes/artifacts/lambda-at-home-runtime-python-3.13.ext4
-
-  build-python-3-14:
-    runs-on: ubuntu-latest
-    name: Build Python 3.14 runtime
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Create output directories
-        run: mkdir -p dist artifacts
-        working-directory: runtimes
-
-      - name: Build generate-ext4 helper image
-        run: docker build --platform linux/amd64 -t generate-ext4 .
-        working-directory: runtimes
-
-      - name: Build Python 3.14 runtime
-        run: |
-          chmod +x ./generate-rootfs.sh
-          ./generate-rootfs.sh lambda-at-home-runtime-python:3.14 ./runtimes/python/3.14/Dockerfile
-        working-directory: runtimes
-
-      - name: Upload ext4 artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-3.14-runtime
-          path: runtimes/artifacts/lambda-at-home-runtime-python-3.14.ext4
+          name: ${{ matrix.artifact }}
+          path: runtimes/artifacts/${{ matrix.artifact }}*.ext4
 
   create-image:
     name: Create image
     runs-on: ubuntu-latest
-    needs: [build-go, build-python-3-13, build-python-3-14]
+    needs: [build-go, build-runtimes]
     steps:
-      - name: Download Python 3.13 runtime artifact
+      - name: Download runtime artifacts
         uses: actions/download-artifact@v4
         with:
-          name: python-3.13-runtime
+          pattern: '*-runtime'
           path: artifacts
-
-      - name: Download Python 3.14 runtime artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: python-3.14-runtime
-          path: artifacts
+          merge-multiple: true
 
       - name: List artifacts
         run: |
