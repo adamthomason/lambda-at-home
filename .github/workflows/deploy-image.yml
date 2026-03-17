@@ -1,0 +1,34 @@
+name: Deploy image
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  create-image:
+    name: Create machine image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download runtime artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: List artifacts
+        run: |
+          echo "Artifacts:"
+          ls artifacts/
+
+  deploy-image-to-cluster:
+    name: Deploy image to cluster
+    environment: ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    needs: [create-image]
+    steps:
+      - name: Do something
+        run: |
+          echo "Doing something"

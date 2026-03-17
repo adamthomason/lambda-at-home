@@ -75,28 +75,24 @@ jobs:
           name: ${{ matrix.artifact }}
           path: runtimes/artifacts/${{ matrix.ext4 }}
 
-  create-image:
-    name: Create machine image
-    runs-on: ubuntu-latest
+  deploy-development:
+    name: Deploy to Development
     needs: [build-go, build-runtimes]
-    steps:
-      - name: Download runtime artifacts
-        uses: actions/download-artifact@v8
-        with:
-          path: artifacts
-          merge-multiple: true
+    uses: ./.github/workflows/deploy-image.yml
+    with:
+      environment: Development
+  
+  deploy-staging:
+    name: Deploy to Staging
+    needs: [deploy-development]
+    uses: ./.github/workflows/deploy-image.yml
+    with:
+      environment: Staging
 
-      - name: List artifacts
-        run: |
-          echo "Artifacts:"
-          ls artifacts/
+  deploy-production:
+    name: Deploy to Production
+    needs: [deploy-staging]
+    uses: ./.github/workflows/deploy-image.yml
+    with:
+      environment: Production
 
-  deploy-image-to-cluster:
-    name: Deploy image to cluster
-    environment: Production
-    runs-on: ubuntu-latest
-    needs: [create-image]
-    steps:
-      - name: Do something
-        run: |
-          echo "Doing something"
