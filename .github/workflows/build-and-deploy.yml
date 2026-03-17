@@ -4,8 +4,9 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - '.github/workflows/build-runtimes.yml'
+      - '.github/workflows/build-and-deploy.yml'
       - 'runtimes/**'
+      - '**/*.go'
 
 jobs:
   build-go:
